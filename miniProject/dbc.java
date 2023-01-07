@@ -24,6 +24,7 @@ public class dbc {
                 + "')";
         try {
             stmt.executeUpdate(query);
+            con.close();
             return 444;
         } catch (SQLException e) {
             System.out.println("1001" + e);
@@ -31,13 +32,16 @@ public class dbc {
         }
     }
 
-    private int checkEmail(String query2) {
+    public int checkEmail(String query2) {
         String query = "select count(*) from usersignup where email = \"" + query2 + "\"";
         try {
             rs = stmt.executeQuery(query);
             rs.next();
-            if (rs.getInt(1) > 0)
+            if (rs.getInt(1) > 0) {
+                con.close();
                 return 1002;// already there
+            }
+            con.close();
             return 444;// not there
         } catch (SQLException e) {
             System.out.println("1002 here " + e + "\n" + query);

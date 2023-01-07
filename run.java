@@ -1,8 +1,7 @@
 import java.awt.Color;
-
 import java.util.Arrays;
 import java.util.regex.Pattern;
-
+import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 import miniProject.*;
 import java.awt.event.*;
@@ -11,7 +10,6 @@ public class run {
     run() {
         Signup a = new Signup();
         a.setVisible(true);
-        System.out.println("here->" + a.getData());
     }
 
     public static void main(String args[]) {
@@ -51,7 +49,7 @@ class Signup extends JFrame implements ActionListener {
     private JLabel lCity = new JLabel("City");
     private JLabel lAge = new JLabel("Age");
     private JLabel lPassword = new JLabel("Password");
-    private JLabel lComPassword = new JLabel("Comform");
+    private JLabel lComPassword = new JLabel("Comfirm");
     private JButton Submit = new JButton("Enroll");
     private JPanel p1 = new JPanel();
     private JLabel star_for_Name = new JLabel("*");
@@ -232,6 +230,12 @@ class Signup extends JFrame implements ActionListener {
     }
 
     private void InsertData() {
+        spinnerShow(true);
+        try {
+            TimeUnit.SECONDS.sleep(4);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
         if (conn.Insert_User_Sign(this.uName, this.uEmial, this.uCity, String.valueOf(this.uPassword),
                 this.uAge) == 1001) {
             tfEmail.setText("");
