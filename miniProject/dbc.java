@@ -28,7 +28,7 @@ public class dbc {
             con.close();
             return 444;
         } catch (SQLException e) {
-            System.out.println("1001" + e);
+            System.out.println("1001 here is exeception" + e);
             return 1001;
         }
     }
@@ -65,7 +65,7 @@ public class dbc {
                 con.close();
                 return 1002;// already there
             }
-            con.close();
+            // con.close();
             return 444;// not there
         } catch (SQLException e) {
             System.out.println("1002 here " + e + "\n" + query2);

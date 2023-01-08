@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Window;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 import java.util.concurrent.TimeUnit;
@@ -9,6 +10,7 @@ import java.awt.event.*;
 public class run {
     run() {
         Signup a = new Signup();
+        a.setobj(a);
         a.setVisible(true);
     }
 
@@ -17,23 +19,36 @@ public class run {
     }
 }
 
-class HomePage {
-    HomePage(String s) {
-        System.out.println(s);
-    }
-}
-
 class Signup extends JFrame implements ActionListener {
 
+    Object CurrentObj;
+    Object LoginObj;
+
+    public void setobj(Object obj) {
+        this.CurrentObj = obj;// setting the current obj
+    }
+
+    public Object getobj() {
+        return this.CurrentObj; // getting current obj
+    }
+
+    public void setloginObj(Object obj) {
+        this.LoginObj = obj; // setting Login frame obj
+    }
+
+    public Object getloginObj() {
+        return this.LoginObj;// Getting Login Page Obj
+    }
+
     Signup() {
+        FrameInitailzes();
     }
 
     protected String getData() {
-        FrameInitailzes();
         return this.uEmial;
     }
 
-    dbc conn = new dbc();
+    // dbc conn = new dbc();
     private String uName, uEmial, uCity = null;
     char[] uPassword, uComPassword;
     private int uAge = 0;
@@ -213,13 +228,24 @@ class Signup extends JFrame implements ActionListener {
 
         alreadyAcc.setFont(new java.awt.Font("Trebuchet MS", 0, 24));
         alreadyAcc.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        alreadyAcc.setBounds(10, 440, 480, 40);
+        alreadyAcc.setBounds(10, 520, 480, 40);
         alreadyAcc.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                setVisible(false);
-                new HomePage("uEmial");
+                jumpToLogin();
             }
         });
+    }
+
+    public void jumpToLogin() {
+        spinnerShow(false);
+        setVisible(false);
+        if (getloginObj() == null) {
+            LoginPage obj = new LoginPage(getobj());
+            obj.setVisible(true);
+            setloginObj(obj);
+        } else {
+            ((Window) LoginObj).setVisible(true);
+        }
     }
 
     public static boolean isEmailValid(String email) {
@@ -230,22 +256,14 @@ class Signup extends JFrame implements ActionListener {
     }
 
     private void InsertData() {
-        spinnerShow(true);
-        try {
-            TimeUnit.SECONDS.sleep(4);
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
+        dbc conn = new dbc();
         if (conn.Insert_User_Sign(this.uName, this.uEmial, this.uCity, String.valueOf(this.uPassword),
                 this.uAge) == 1001) {
             tfEmail.setText("");
             setErrorTf(tfEmail, errorTextEmail, "Email Already Taken");
             spinnerShow(false);
         } else {
-            System.out.println("done succerssfuly");
-            setVisible(false);
-            new HomePage("sfgsaewrghserdf");
-            spinnerShow(false);
+            jumpToLogin();
         }
     }
 
@@ -315,6 +333,7 @@ class Signup extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        spinnerShow(true);
         Object source = e.getSource();
         if (source == Submit) {
             this.uName = tfName.getText().trim();
@@ -322,7 +341,6 @@ class Signup extends JFrame implements ActionListener {
             this.uPassword = tfPassword.getPassword();
             this.uComPassword = tfComPassword.getPassword();
             this.uCity = tfCity.getText().trim();
-            spinnerShow(true);
             if (CheckInput()) {
                 InsertData();
             } else {

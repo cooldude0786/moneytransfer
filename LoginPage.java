@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Window;
 import java.awt.event.*;
 import java.util.regex.Pattern;
 import miniProject.dbc;
@@ -9,11 +10,39 @@ public class LoginPage extends JFrame implements ActionListener {
     private JTextField tfEmail = new JTextField();
     private JPasswordField tfPassword = new JPasswordField("");
     private int padding = 70;
-    private JButton login = new JButton("Login"), forgotP = new JButton("Forgot Password");
+    private JButton login = new JButton("Login"), forgotP = new JButton("Forgot Password"), back = new JButton("<-");
+    private JPanel p1 = new JPanel();
 
-    LoginPage() {
-        setTitle("Loginsfed Up");
-        setVisible(true);
+    // LoginPage() {
+    // setTitle("Login Up");
+    // // setVisible(true);
+    // setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    // setLayout(null);
+    // setBounds(500, 80, 500, 700);
+    // setResizable(false);
+    // compInitailize();
+    // styleCom();
+    // addCom();
+    // }
+    private void spinnerShow(boolean val) {
+        this.p1.setVisible(val);
+    }
+    // forgotP.setBounds(150, 282 + padding, 200, 10);
+
+    private void spinner() {
+        p1.setBounds(180, 400, 150, 120);
+        JLabel imageicon = new JLabel();
+        imageicon.setIcon(new ImageIcon("src\\img4.gif"));
+        p1.add(imageicon);
+        add(p1);
+        spinnerShow(false);
+    }
+
+    Object c;
+
+    LoginPage(Object prev) {
+        setTitle("Login Up");
+        // setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
         setBounds(500, 80, 500, 700);
@@ -21,7 +50,8 @@ public class LoginPage extends JFrame implements ActionListener {
         compInitailize();
         styleCom();
         addCom();
-        // add(lEmail);
+        spinner();
+        this.c = prev;
     }
 
     private void compInitailize() {
@@ -30,6 +60,7 @@ public class LoginPage extends JFrame implements ActionListener {
         lErrorText = new JLabel();
         login.addActionListener(this);
         forgotP.addActionListener(this);
+        back.addActionListener(this);
     }
 
     private void styleCom() {
@@ -49,6 +80,12 @@ public class LoginPage extends JFrame implements ActionListener {
         forgotP.setBorderPainted(false);
         forgotP.setBackground(Color.white);
 
+        back.setFont(new java.awt.Font("Trebuchet MS", 0, 8));
+        back.setBounds(5, 5, 45, 20);
+        back.setBorderPainted(false);
+        back.setBorder(null);
+        back.setBackground(Color.white);
+
         login.setBounds(150, 520, 200, 50);
         login.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         login.setFont(new java.awt.Font("Trebuchet MS", 0, 25));
@@ -67,6 +104,7 @@ public class LoginPage extends JFrame implements ActionListener {
         add(tfPassword);
         add(tfEmail);
         add(forgotP);
+        add(back);
         add(login);
         add(lErrorText);
     }
@@ -92,24 +130,29 @@ public class LoginPage extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        spinnerShow(true);
         Object source = e.getSource();
         if (source == login) {
             if (tfEmail.getText().trim().length() <= 0) {
                 setErrorTf(tfEmail, lErrorText, "Empty Email", tfEmail.getY() + 42);
+                spinnerShow(false);
                 return;
             }
 
             if (tfPassword.getPassword().length < 6) {
                 setErrorTf(tfPassword, lErrorText, "More tha 6 charater", tfPassword.getY() + 42);
+                spinnerShow(false);
                 return;
             }
             if (!isEmailValid(tfEmail.getText().trim())) {
                 setErrorTf(tfEmail, lErrorText, "In Valid Email", tfEmail.getY() + 42);
+                spinnerShow(false);
                 return;
             }
 
             if (new dbc().checkEmail(tfEmail.getText().trim().toString()) != 1002) {
                 setErrorTf(tfEmail, lErrorText, "Not here", tfEmail.getY() + 42);
+                spinnerShow(false);
                 return;
             } else {
                 remErrorTf(tfEmail, lErrorText);
@@ -117,18 +160,22 @@ public class LoginPage extends JFrame implements ActionListener {
             if (new dbc().Login(tfEmail.getText(), String.valueOf(tfPassword.getPassword()))) {
                 remErrorTf(tfEmail, lErrorText);
                 remErrorTf(tfPassword, lErrorText);
+                spinnerShow(false);
                 return;
             } else {
                 setErrorTf(tfPassword, lErrorText, "Wrong password", tfPassword.getY() + 42);
-
+                spinnerShow(false);
             }
+        }
+        if (source == back) {
+            spinnerShow(false);
+            setVisible(false);
+            ((Window) c).setVisible(true);
         }
     }
 
-    // System.out.println(tfEmail.getX() + " " + tfPassword.getAlignmentY());
+    // public static void main(String[] args) {
+    // new LoginPage().setVisible(true);
+    // ;
     // }
-
-    public static void main(String[] args) {
-        new LoginPage();
-    }
 }
