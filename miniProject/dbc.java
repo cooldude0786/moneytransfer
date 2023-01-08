@@ -6,13 +6,14 @@ public class dbc {
 
     static Connection con;
     static Statement stmt;
+    PreparedStatement stmt2 = null;
     public ResultSet rs;
     static String DBSelected = "moneytransfer";
     static String portSelect = "localhost:3306";
     static String url = "jdbc:mysql://" + portSelect + "/" + DBSelected;
 
     static void Connect_Db() throws SQLException {
-        System.out.println("Database Selected");
+        // System.out.println("Database Selected");
     }
 
     public int Insert_User_Sign(String name, String email, String city, String password, int age) {
@@ -32,10 +33,33 @@ public class dbc {
         }
     }
 
-    public int checkEmail(String query2) {
-        String query = "select count(*) from usersignup where email = \"" + query2 + "\"";
+    public boolean Login(String email, String Password) {
         try {
-            rs = stmt.executeQuery(query);
+            stmt2 = con.prepareStatement("select count(*) from usersignup where email = ? and password = ?");
+            stmt2.setString(1, email);
+            stmt2.setString(2, Password);
+            rs = stmt2.executeQuery();
+            rs.next();
+            if (rs.getInt(1) > 0) {
+                // found the user
+                return true;
+            } else {
+                // wrong password
+                return false;
+            }
+        } catch (SQLException e) {
+            System.out.println("Exception at user emai verification \n" + e);
+            // TODO: handle exception
+        }
+        return true;
+    }
+
+    public int checkEmail(String query2) {
+        String query3 = "select count(*) from usersignup where email =?";
+        try {
+            stmt2 = con.prepareStatement(query3);
+            stmt2.setString(1, query2);
+            rs = stmt2.executeQuery();
             rs.next();
             if (rs.getInt(1) > 0) {
                 con.close();
@@ -44,7 +68,7 @@ public class dbc {
             con.close();
             return 444;// not there
         } catch (SQLException e) {
-            System.out.println("1002 here " + e + "\n" + query);
+            System.out.println("1002 here " + e + "\n" + query2);
             return 1002;
         }
     }
@@ -53,7 +77,7 @@ public class dbc {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             con = DriverManager.getConnection(url, "root", "Khizar@mysql");
-            System.out.println("Connection database...");
+            // System.out.println("Connection database...");
             stmt = con.createStatement();
             Connect_Db();
         } catch (SQLException e) {

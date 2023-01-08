@@ -45,7 +45,7 @@ public class LoginPage extends JFrame implements ActionListener {
         tfPassword.setBounds(90, 200 + padding, 320, 40);
         tfPassword.setFont(new java.awt.Font("Trebuchet MS", 0, 15));
 
-        forgotP.setBounds(150, 242 + padding, 200, 10);
+        forgotP.setBounds(150, 282 + padding, 200, 10);
         forgotP.setBorderPainted(false);
         forgotP.setBackground(Color.white);
 
@@ -79,6 +79,7 @@ public class LoginPage extends JFrame implements ActionListener {
 
     private void remErrorTf(JTextField tf, JLabel label) {
         tf.setBorder(null);
+        tf.setBorder(BorderFactory.createLineBorder(Color.GREEN, 1));
         label.setText("");
     }
 
@@ -93,22 +94,39 @@ public class LoginPage extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         if (source == login) {
-            remErrorTf(tfEmail, lErrorText);
             if (tfEmail.getText().trim().length() <= 0) {
                 setErrorTf(tfEmail, lErrorText, "Empty Email", tfEmail.getY() + 42);
+                return;
+            }
+
+            if (tfPassword.getPassword().length < 6) {
+                setErrorTf(tfPassword, lErrorText, "More tha 6 charater", tfPassword.getY() + 42);
                 return;
             }
             if (!isEmailValid(tfEmail.getText().trim())) {
                 setErrorTf(tfEmail, lErrorText, "In Valid Email", tfEmail.getY() + 42);
                 return;
             }
+
             if (new dbc().checkEmail(tfEmail.getText().trim().toString()) != 1002) {
                 setErrorTf(tfEmail, lErrorText, "Not here", tfEmail.getY() + 42);
                 return;
+            } else {
+                remErrorTf(tfEmail, lErrorText);
+            }
+            if (new dbc().Login(tfEmail.getText(), String.valueOf(tfPassword.getPassword()))) {
+                remErrorTf(tfEmail, lErrorText);
+                remErrorTf(tfPassword, lErrorText);
+                return;
+            } else {
+                setErrorTf(tfPassword, lErrorText, "Wrong password", tfPassword.getY() + 42);
+
             }
         }
-        // System.out.println(tfEmail.getX() + " " + tfPassword.getAlignmentY());
     }
+
+    // System.out.println(tfEmail.getX() + " " + tfPassword.getAlignmentY());
+    // }
 
     public static void main(String[] args) {
         new LoginPage();
