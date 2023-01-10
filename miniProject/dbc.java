@@ -25,7 +25,7 @@ public class dbc {
                 + "')";
         try {
             stmt.executeUpdate(query);
-            con.close();
+            // con.close();
             return 444;
         } catch (SQLException e) {
             System.out.println("1001 here is exeception" + e);
@@ -62,7 +62,7 @@ public class dbc {
             rs = stmt2.executeQuery();
             rs.next();
             if (rs.getInt(1) > 0) {
-                con.close();
+                // con.close();
                 return 1002;// already there
             }
             // con.close();
@@ -71,6 +71,49 @@ public class dbc {
             System.out.println("1002 here " + e + "\n" + query2);
             return 1002;
         }
+    }
+
+    public boolean matchId(int id, String pass) {
+        try {
+            stmt2 = con.prepareStatement(
+                    "select count(*) from usersignup where id = ? and password = ?");
+            stmt2.setInt(1, id);
+            stmt2.setString(2, pass);
+            rs = stmt2.executeQuery();
+            rs.next();
+            if (rs.getInt(1) > 0) {
+                // found the user
+                return true;
+            } else {
+                // wrong password
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println("At check id with email " + e);
+        }
+        return false;
+    }
+
+    public int showBal(String id) {
+        String query = "select bal  from balance where id = ?";
+        try {
+            stmt2 = con.prepareStatement(query);
+            stmt2.setString(1, id);
+            rs = stmt2.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);// already there
+            }
+        } catch (Exception e) {
+            System.out.println("In balance" + e);
+            return 0;
+            // TODO: handle exception
+        }
+
+        return 0;
+    }
+
+    public void showTranc() {
+
     }
 
     void Conn() {
@@ -91,4 +134,8 @@ public class dbc {
     public dbc() {
         Conn();
     }
+
+    // public static void main(String[] args) {
+    // new dbc().showBal("1");
+    // }
 }

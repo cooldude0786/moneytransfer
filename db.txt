@@ -1,0 +1,15 @@
+ create table Balance(
+    -> id int Primary Key,
+    -> bal int(11) not null,
+    -> FOREIGN KEY (id) REFERENCES usersignup(id));
+
+
+create table transacDetail(
+    -> TransDetail int NOT NULL AUTO_INCREMENT,
+    -> ReceiverId int(11),
+    -> SenderId int(11),
+    -> status varchar(20),
+    -> FOREIGN KEY (SenderId) REFERENCES usersignup(id),
+    -> FOREIGN KEY (ReceiverId) REFERENCES usersignup(id),
+    ->  PRIMARY KEY (TransDetail)
+    -> );
