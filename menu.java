@@ -12,6 +12,7 @@ public class menu extends JFrame implements ActionListener {
     private DefaultListModel<String> userEnterName = new DefaultListModel<>();
     private JList<String> userEnterJList = new JList<>(userEnterName);
     private int id = 1;
+    private int fAmount;
     JScrollPane scrollpane = new JScrollPane(userEnterJList);
 
     menu() {
@@ -82,12 +83,25 @@ public class menu extends JFrame implements ActionListener {
         SendMoney.addActionListener(this);
         Logout.addActionListener(this);
         addto(scrollpane);
+        setBalance();
+    }
+
+    private void setBalance() {
         int temp = new dbc().showBal(Integer.toBinaryString(id));
         BalanceAmount.setText(Integer.toString(temp));
     }
 
     private void addto(Object a) {
         add((Component) a, 0);
+    }
+
+    boolean checkAmount(String Amount) {
+        try {
+            fAmount = Integer.parseUnsignedInt(Amount);
+            return false;
+        } catch (Exception e) {
+            return true;
+        }
     }
 
     @Override
@@ -98,22 +112,28 @@ public class menu extends JFrame implements ActionListener {
             int optionCheck = JOptionPane.showConfirmDialog(null, amount, "Enter Amount",
                     JOptionPane.OK_CANCEL_OPTION,
                     JOptionPane.PLAIN_MESSAGE);
+            amount.requestFocus();
             if (optionCheck != 0 || amount.getText().length() == 0) {
                 JOptionPane.showMessageDialog(null, "Empty Error!");
                 return;
             }
+            if (checkAmount(amount.getText())) {
+                JOptionPane.showMessageDialog(null, "Enter Integer Values!");
+                return;
+            }
+            fAmount = Integer.parseInt(amount.getText());
             JPasswordField pf = new JPasswordField();
             int okCxl = JOptionPane.showConfirmDialog(null, pf, "Enter Password", JOptionPane.OK_CANCEL_OPTION,
                     JOptionPane.PLAIN_MESSAGE);
             if (okCxl == 0) {
                 // System.out.println(0);
-                if (new dbc().matchId(id, String.valueOf(pf.getPassword()))) {
+                if (new dbc().matchId(id, String.valueOf(pf.getPassword()), fAmount)) {
                     JOptionPane.showMessageDialog(null, "Update Balance");
+                    setBalance();
                 } else {
-                    JOptionPane.showMessageDialog(null, "Failed!");
+                    JOptionPane.showMessageDialog(null, "Wrong Password!");
                 }
             }
-            System.out.println(pf.getPassword());
         }
     }
 

@@ -1,6 +1,7 @@
 package miniProject;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class dbc {
 
@@ -73,7 +74,7 @@ public class dbc {
         }
     }
 
-    public boolean matchId(int id, String pass) {
+    public boolean matchId(int id, String pass, int amount) {
         try {
             stmt2 = con.prepareStatement(
                     "select count(*) from usersignup where id = ? and password = ?");
@@ -82,8 +83,16 @@ public class dbc {
             rs = stmt2.executeQuery();
             rs.next();
             if (rs.getInt(1) > 0) {
-                // found the user
-                return true;
+                amount += showBal(Integer.toString(id));
+                stmt2 = con.prepareStatement("update balance set bal = ? where id = ?");
+                stmt2.setInt(1, amount);
+                stmt2.setInt(2, id);
+                if (stmt2.executeUpdate() == 1) {
+                    insertTrancdetail(id, id, "Succe", "db");
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
                 // wrong password
                 return false;
@@ -92,6 +101,41 @@ public class dbc {
             System.out.println("At check id with email " + e);
         }
         return false;
+    }
+
+    public boolean insertTrancdetail(int reciverId, int senderId, String msg, String mode) {
+        try {
+            stmt2 = con.prepareStatement("insert into transacdetail value(NULL,?,?,?,?)");
+            stmt2.setInt(1, reciverId);
+            stmt2.setInt(2, senderId);
+            stmt2.setString(3, msg);
+            stmt2.setString(4, "db");
+            if (stmt2.executeUpdate() == 1) {
+                System.out.println("Done and succesfull");
+            } else {
+                System.out.println("Fail in attemp");
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            // TODO: handle exception
+        }
+        return true;
+    }
+
+    public ArrayList getTransacDetail() {
+        ArrayList a = new ArrayList<>();
+        try {
+            stmt2 = con.prepareStatement("select * from transacdetail where SenderId = 3");
+            rs = stmt2.executeQuery();
+            while (rs.next()) {
+                System.out.println(" " + rs.getInt(1) + " " + rs.getInt(2));
+            }
+        } catch (Exception e) {
+            System.out.println("Exception " + e.getMessage());
+            // TODO: handle exception
+        }
+        return a;
     }
 
     public int showBal(String id) {
@@ -136,6 +180,7 @@ public class dbc {
     }
 
     // public static void main(String[] args) {
-    // new dbc().showBal("1");
+    // System.out.println(new dbc().getTransacDetail());
+
     // }
 }
