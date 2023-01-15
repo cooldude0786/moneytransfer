@@ -2,10 +2,11 @@ import java.awt.Color;
 import java.awt.Window;
 import java.util.Arrays;
 import java.util.regex.Pattern;
-import java.util.concurrent.TimeUnit;
 import javax.swing.*;
-import miniProject.*;
+import miniProject.dbc;
 import java.awt.event.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class run {
     run() {
@@ -77,6 +78,23 @@ class Signup extends JFrame implements ActionListener {
     private JLabel errorTextComPass = new JLabel();
     private JLabel errorTextAge = new JLabel();
     private JLabel alreadyAcc = new JLabel("Already Have Account ?");
+    protected String ccCode;
+
+    public void setccCode() {
+        String temp = "";
+        for (char c : uEmial.toCharArray()) {
+            char dot = '.';
+            if (c == dot || c == '@')
+                break;
+            else
+                temp += String.valueOf(c);
+        }
+        ccCode = temp + temp.length();
+    }
+
+    public String getCCode() {
+        return this.ccCode;
+    }
 
     void FrameInitailzes() {
         setTitle("Sign Up");
@@ -263,6 +281,13 @@ class Signup extends JFrame implements ActionListener {
             setErrorTf(tfEmail, errorTextEmail, "Email Already Taken");
             spinnerShow(false);
         } else {
+            int id = new dbc().getId(this.uEmial);
+            setccCode();
+
+            if (!new dbc().createTbale(ccCode, uAge, id)) {
+                JOptionPane.showMessageDialog(null, "Empty Error!");
+                System.exit(0);
+            }
             jumpToLogin();
         }
     }

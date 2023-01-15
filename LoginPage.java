@@ -160,6 +160,9 @@ public class LoginPage extends JFrame implements ActionListener {
             if (new dbc().Login(tfEmail.getText(), String.valueOf(tfPassword.getPassword()))) {
                 remErrorTf(tfEmail, lErrorText);
                 remErrorTf(tfPassword, lErrorText);
+                this.setVisible(false);
+                menu a = new menu(tfEmail.getText().trim().toString(), tfEmail.getText().trim().toString());
+                a.setVisible(true);
                 spinnerShow(false);
                 return;
             } else {
@@ -168,8 +171,8 @@ public class LoginPage extends JFrame implements ActionListener {
             }
         }
         if (source == back) {
-            spinnerShow(false);
             setVisible(false);
+            spinnerShow(false);
             ((Window) c).setVisible(true);
         }
     }
